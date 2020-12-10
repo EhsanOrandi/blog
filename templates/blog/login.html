@@ -1,0 +1,18 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{%  block title %}
+      Login
+{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+            {% include 'component/form.html' %}
+            <input type="submit" class="btn btn-outline-success ml-3" value="Login"><br>
+            <a href="{% url 'register' %}" class="ml-3">Don't have an account? Register Now!</a>
+        </form>
+    </div>
+{% endblock %}
+
+

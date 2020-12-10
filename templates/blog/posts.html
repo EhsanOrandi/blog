@@ -1,0 +1,68 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Post Archive
+{% endblock %}
+{% block body %}
+<div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-ride="carousel">
+    <ol class="carousel-indicators">
+        {% for post in posts %}
+            {% if forloop.counter0 < 3 %}
+                <li data-target="#carouselExampleCaptions" data-slide-to="{{forloop.counter0}}" {% if forloop.first %} class="active" {% endif %}></li>
+            {% endif %}
+        {% endfor %}
+    </ol>
+    <div class="carousel-inner">
+        {% for post in posts %}
+            {% if forloop.counter0 < 3 %}
+                <div class="carousel-item {% if forloop.first %} active {% endif %}">
+                    <img src="{{post.image.url}}" class="d-block w-100" height="650">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h2><a href="{% url 'post_single' post.slug %}" class="text-light font-weight-bold text-decoration-none">{{post.slug}}</a></h2>
+                        <p class="font-weight-bolder">{{post.title}}</p>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<!-- end of Carousel -->
+
+<div class="container">
+    <!-- Card goups -->
+    <div class="row row-cols-1 row-cols-md-3 mt-5">
+        {% for post in posts %}
+        <div class="col my-5">
+            <div class="card border-0">
+                {% if post.image %}
+                <img src="{{post.image.url}}" class="card-img-top rounded-circle" width="300" height="300"
+                    alt="{{post.title}}">
+                {% endif %}
+                <div class="card-body mb-0">
+                    <h5 class="card-title">{{post.title}}</h5>
+                    <p class="card-text text-justify overflow-hidden" style="height: 100px;">{{post.content}}</p>
+                    <a class="btn btn-info" href="{% url 'post_single' post.slug %}">Read More <small>>></small></a>
+                </div>
+                <div class="card-footer mt-0">
+                    <small class="text-muted">{{post.author.first_name}} {{post.author.last_name}} | Updated at
+                        {{post.updated_at}}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- end of card groups -->
+</div>
+{% endblock %}
+
+
+
+
+<!-- <a href="{% url 'post_single' post.slug %}">{{post}}</a> -->

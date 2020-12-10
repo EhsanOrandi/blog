@@ -1,0 +1,6 @@
+venv/
+vscode/
+.vscode/
+media/
+static/
+db.sqlite3

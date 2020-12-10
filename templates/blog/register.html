@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{%  block title %}
+    Register
+{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <form action="{% url 'register' %}" method="post">
+            <div class="row">
+                {% csrf_token %}
+                {% include 'component/form.html' %}
+            </div>
+            <input type="submit" class="btn btn-outline-primary" value="Register">
+        </form>
+    </div>
+{% endblock %}
