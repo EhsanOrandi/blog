@@ -1,0 +1,36 @@
+{% extends 'base/base.html' %}
+{% block title %}
+Post Archive
+{% endblock %}
+{% block body %}
+<div class="container">
+    <!-- Card goups -->
+    <div class="row row-cols-1 row-cols-md-3 mt-5">
+        {% for post in post_list %}
+        <div class="col my-5">
+            <div class="card border-0">
+                {% if post.image %}
+                <img src="{{post.image.url}}" class="card-img-top rounded-circle" width="300" height="300"
+                    alt="{{post.title}}">
+                {% endif %}
+                <div class="card-body mb-0">
+                    <h5 class="card-title">{{post.title}}</h5>
+                    <p class="card-text text-justify overflow-hidden" style="height: 100px;">{{post.content}}</p>
+                    <a class="btn btn-info" href="{% url 'post_single' post.slug %}">Read More <small>>></small></a>
+                </div>
+                <div class="card-footer mt-0">
+                    <small class="text-muted">{{post.author.full_name}} | Updated at
+                        {{post.updated_at}}</small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- end of card groups -->
+</div>
+{% endblock %}
+
+
+
+
+<!-- <a href="{% url 'post_single' post.slug %}">{{post}}</a> -->

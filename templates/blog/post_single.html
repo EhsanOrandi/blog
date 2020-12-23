@@ -6,8 +6,8 @@
     <div class="container mt-5">
         <h2>{{post.title}}</h2>
         <div class="row">
-            <span class="col-4 border-right">Category : <a href="{% url 'category_single' category.slug %}">{{ category.title }}</a></span>
-            <span class="col-3 border-right">Author : {{author.first_name}} {{author.last_name}}</span>
+            <span class="col-4 border-right">Category : <a href="{% url 'category_single' post.category.slug %}">{{ post.category.title }}</a></span>
+            <span class="col-3 border-right">Author : {{post.author.full_name}}</span>
             <span class="col-4">{{post.published_at}}</span>
         </div>
         {% if post.image %}
@@ -16,9 +16,9 @@
         <p class="text-justify my-4">{{post.content}}</p>
         <hr>
         <!-- entering comment -->
-        {% if settings.allow_discussion %}
+        {% if post.post_setting.allow_discussion %}
             <div class="pt-2">            
-                <form action="{% url 'post_single' pk=post.slug %}" method="post">
+                <form action="{% url 'post_single' post.slug %}" method="post">
                     {% csrf_token %}
                     {% include 'component/form.html' %}
                     <input type="submit" class="btn btn-outline-info ml-3" value="Submit Comment">
@@ -26,10 +26,10 @@
             </div>
             <div class="mt-2 rounded border p-2" id="comment-container">
                 <h4>Comments</h4>
-            {% for comment in comments %}
+            {% for comment in post.comments.all %}
                 <div class="comment-box-container border-bottom d-flex flex-column align-items-center pt-4">
                     <div class="w-100 flex-column align-items-center rounded px-2">
-                        <h6>{{comment.author.first_name}} {{comment.author.last_name}}</h6>
+                        <h6>{{comment.author.full_name}}</h6>
                         <p>{{comment.content}}</p>
                     </div>
                 </div>

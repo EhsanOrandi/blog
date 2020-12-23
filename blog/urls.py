@@ -1,12 +1,9 @@
 from django.urls import path
-from .views import home, post_single, category_single , categories_archive, login_view, logout_view, register_view
+from .views import PostsArchive, PostSingle, CategoriesArchive, CategorySingle
 
 urlpatterns = [
-    path('posts/', home, name="post_archive"),
-    path('posts/<slug:pk>/', post_single, name='post_single'),
-    path('categories/', categories_archive , name="categories_archive"),
-    path('categories/<slug:pk>', category_single, name='category_single'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('register/', register_view, name='register')
+    path('posts/', PostsArchive.as_view(), name="post_archive"),
+    path('posts/<slug:slug>/', PostSingle.as_view(), name='post_single'),
+    path('categories/', CategoriesArchive.as_view() , name="categories_archive"),
+    path('categories/<slug:slug>', CategorySingle.as_view(), name='category_single'),
 ]

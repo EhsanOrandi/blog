@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.utils.translation import ugettext_lazy as _     # for making app multilingual
-from django.contrib.auth.models import User     # Django user model
+# from django.contrib.auth.models import User     # Django user model
 from django.db import models
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 # Create your models here.
 class Category (models.Model) :
@@ -10,7 +12,6 @@ class Category (models.Model) :
     slug = models.SlugField(_("Slug"), unique=True, db_index=True)
     parent = models.ForeignKey('self', verbose_name=_("Parent"), on_delete=models.SET_NULL, null=True, blank=True, related_name='children', related_query_name='children')
     
-
     class Meta:
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
@@ -26,7 +27,7 @@ class Post (models.Model) :
     created_at = models.DateTimeField(_("Created at"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Updated at"), auto_now=True)
     published_at = models.DateTimeField(_("Published at"), db_index=True)
-    draft = models.BooleanField(_("Draft"), default=True, db_index=True)
+    draft = models.BooleanField(_("Draft"), default=False, db_index=True)
     image = models.ImageField(_("Image"), upload_to = 'post/images', null=True, blank=True)
     author = models.ForeignKey(User, verbose_name=_("Author"), related_name='posts', related_query_name='posts', on_delete=models.CASCADE)
     category = models.ForeignKey(Category, verbose_name=_("Category"), on_delete=models.SET_NULL, null=True, blank=True)

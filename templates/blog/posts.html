@@ -5,17 +5,17 @@ Post Archive
 {% block body %}
 <div id="carouselExampleCaptions" class="carousel slide carousel-fade" data-ride="carousel">
     <ol class="carousel-indicators">
-        {% for post in posts %}
+        {% for post in post_list %}
             {% if forloop.counter0 < 3 %}
                 <li data-target="#carouselExampleCaptions" data-slide-to="{{forloop.counter0}}" {% if forloop.first %} class="active" {% endif %}></li>
             {% endif %}
         {% endfor %}
     </ol>
     <div class="carousel-inner">
-        {% for post in posts %}
+        {% for post in post_list %}
             {% if forloop.counter0 < 3 %}
                 <div class="carousel-item {% if forloop.first %} active {% endif %}">
-                    <img src="{{post.image.url}}" class="d-block w-100" height="650">
+                    <img src="{{post.image.url}}" class="d-block w-100" height="650" alt="{{post.title}}">
                     <div class="carousel-caption d-none d-md-block">
                         <h2><a href="{% url 'post_single' post.slug %}" class="text-light font-weight-bold text-decoration-none">{{post.slug}}</a></h2>
                         <p class="font-weight-bolder">{{post.title}}</p>
@@ -38,7 +38,7 @@ Post Archive
 <div class="container">
     <!-- Card goups -->
     <div class="row row-cols-1 row-cols-md-3 mt-5">
-        {% for post in posts %}
+        {% for post in post_list %}
         <div class="col my-5">
             <div class="card border-0">
                 {% if post.image %}
@@ -51,7 +51,7 @@ Post Archive
                     <a class="btn btn-info" href="{% url 'post_single' post.slug %}">Read More <small>>></small></a>
                 </div>
                 <div class="card-footer mt-0">
-                    <small class="text-muted">{{post.author.first_name}} {{post.author.last_name}} | Updated at
+                    <small class="text-muted">{{post.author.full_name}} | Updated at
                         {{post.updated_at}}</small>
                 </div>
             </div>

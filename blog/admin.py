@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.contrib import admin
-from .models import Post, Category, Comment, User, Post_setting, Comment_like
+from .models import Post, Category, Comment, Post_setting, Comment_like
 from .actions import make_published
 # Register your models here.
 
