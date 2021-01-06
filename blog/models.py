@@ -16,6 +16,11 @@ class Category (models.Model) :
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
 
+    @property
+    def post_count(self):
+        counter = Post.objects.filter(category=self).count()
+        return counter
+
     def __str__(self):
         return self.title
 

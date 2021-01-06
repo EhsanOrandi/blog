@@ -1,13 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.http import HttpResponse , HttpResponseNotFound, Http404, HttpResponseRedirect
+from django.http import HttpResponse , HttpResponseNotFound, Http404, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.template import loader
 from django.contrib.auth import authenticate, get_user_model
 from django.views.generic import ListView, DetailView, FormView, CreateView
+from django.views.generic.edit import FormMixin
 from .forms import CommentForm
-from .models import Post, Category, Comment
+from .models import Post, Category, Comment, Comment_like
+import json
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 User = get_user_model()
 
@@ -33,13 +36,13 @@ class PostsArchive(ListView):
 #     }
 #     return HttpResponse(template.render(context, request))
 
-class PostSingle(DetailView, FormView, CreateView):
+class PostSingle(FormMixin, DetailView):
     model = Post
     form_class = CommentForm
     template_name = 'blog/post_single.html'
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+        context = super(PostSingle, self).get_context_data(**kwargs)
         post = context.get('post', None)
         context['comments'] = Comment.objects.filter(post=post)
         context['form'] = self.get_form()
@@ -49,19 +52,30 @@ class PostSingle(DetailView, FormView, CreateView):
         slug = self.kwargs.get('slug')
         return reverse('post_single', kwargs={'slug': slug})
 
-    def form_valid(self, form):
-        data = self.get_form_kwargs().get('data')
-        content = data.get('content', None)
-        slug = self.kwargs.get('slug', None)
-        author = self.request.user
-        post = Post.objects.get(slug__exact=slug)
-        Comment.objects.create(
-            post=post,
-            author=author,
-            content=content,
-            is_confirmed=True
-        )
-        return HttpResponseRedirect(self.get_success_url())
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden()
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid():
+            print(form.cleaned_data['content'])
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    # def form_valid(self, form):
+    #     data = self.get_form_kwargs().get('data')
+    #     content = data.get('content', None)
+    #     slug = self.kwargs.get('slug', None)
+    #     author = self.request.user
+    #     post = Post.objects.get(slug__exact=slug)
+    #     Comment.objects.create(
+    #         post=post,
+    #         author=author,
+    #         content=content,
+    #         is_confirmed=True
+    #     )
+    #     return HttpResponseRedirect(self.get_success_url())
 
 
 # def post_single(request, pk):
@@ -122,3 +136,26 @@ class CategorySingle(DetailView):
         category = context.get('category', None)
         context['posts'] = Post.objects.filter(category=category)
         return context     
+
+@csrf_exempt
+def likeComment(request):
+    data = json.loads(request.body)
+    try:
+        comment = Comment.objects.get(id=data['comment_id'])
+    except Comment.DoesNotExist:
+        return HttpResponse("No such comment found!", status=404)
+    try:
+        comment_like = Comment_like.objects.get(author=request.user, comment=comment)
+        comment_like.status = data['status']
+        comment_like.save()
+    except Comment_like.DoesNotExist:
+        Comment_like.objects.create(author=request.user, status=data['status'], comment=comment)
+
+    result = {'like_count':comment.like_count , 'dislike_count':comment.dislike_count}
+    return HttpResponse(json.dumps(result), status=201)
+
+@csrf_exempt
+def addComment(request):
+    data = json.loads(request.body)
+    print(data)
+    return HttpResponse(json.dumps(data), status=201)
